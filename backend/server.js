@@ -13,12 +13,12 @@ app.use(express.json());
    Reference data — opportunity map + agent catalogue
    ======================================================= */
 const AGENTS = [
-  { id: 'support', label: 'AI Customer Support', baseLow: 8000, baseHigh: 15000 },
-  { id: 'voice', label: 'AI Voice / Receptionist', baseLow: 10000, baseHigh: 20000 },
-  { id: 'email', label: 'AI Email / Comms', baseLow: 6000, baseHigh: 12000 },
-  { id: 'report', label: 'AI Reporting / Analytics', baseLow: 12000, baseHigh: 25000 },
-  { id: 'tax', label: 'AI Tax / Audit / Compliance', baseLow: 15000, baseHigh: 30000 },
-  { id: 'kb', label: 'AI Knowledge / Workflow', baseLow: 10000, baseHigh: 20000 },
+  { id: 'support', label: 'AI Customer Support', setupLow: 1500, setupHigh: 3000, monthlyLow: 400, monthlyHigh: 800 },
+  { id: 'voice', label: 'AI Voice / Receptionist', setupLow: 2000, setupHigh: 4000, monthlyLow: 500, monthlyHigh: 1000 },
+  { id: 'email', label: 'AI Email / Comms', setupLow: 1000, setupHigh: 2000, monthlyLow: 300, monthlyHigh: 600 },
+  { id: 'report', label: 'AI Reporting / Analytics', setupLow: 2500, setupHigh: 5000, monthlyLow: 600, monthlyHigh: 1200 },
+  { id: 'tax', label: 'AI Tax / Audit / Compliance', setupLow: 3000, setupHigh: 6000, monthlyLow: 800, monthlyHigh: 1500 },
+  { id: 'kb', label: 'AI Knowledge / Workflow', setupLow: 2000, setupHigh: 4000, monthlyLow: 500, monthlyHigh: 1000 },
 ];
 
 const SIZE_MULTIPLIERS = { small: 0.8, medium: 1.0, large: 1.4 };
@@ -88,21 +88,29 @@ app.post('/api/roi', (req, res) => {
 
   const selected = AGENTS.filter(a => agentIds.includes(a.id));
   if (selected.length === 0) {
-    return res.json({ implLow: 0, implHigh: 0, amcAnnual: 0, amcMonthly: 0, efficiencyPct: 0 });
+    return res.json({
+      setupLow: 0, setupHigh: 0,
+      monthlyLow: 0, monthlyHigh: 0,
+      annualLow: 0, annualHigh: 0,
+      efficiencyPct: 0,
+    });
   }
 
-  const implLow = selected.reduce((sum, a) => sum + a.baseLow * sizeMult, 0);
-  const implHigh = selected.reduce((sum, a) => sum + a.baseHigh * sizeMult, 0);
-  const implAvg = (implLow + implHigh) / 2;
-  const amcAnnual = implAvg * 0.18;
-  const amcMonthly = amcAnnual / 12;
+  const setupLow = selected.reduce((sum, a) => sum + a.setupLow * sizeMult, 0);
+  const setupHigh = selected.reduce((sum, a) => sum + a.setupHigh * sizeMult, 0);
+  const monthlyLow = selected.reduce((sum, a) => sum + a.monthlyLow * sizeMult, 0);
+  const monthlyHigh = selected.reduce((sum, a) => sum + a.monthlyHigh * sizeMult, 0);
+  const annualLow = monthlyLow * 12;
+  const annualHigh = monthlyHigh * 12;
   const efficiencyPct = Math.min(15 + (selected.length - 1) * 4, 40);
 
   res.json({
-    implLow: Math.round(implLow),
-    implHigh: Math.round(implHigh),
-    amcAnnual: Math.round(amcAnnual),
-    amcMonthly: Math.round(amcMonthly),
+    setupLow: Math.round(setupLow),
+    setupHigh: Math.round(setupHigh),
+    monthlyLow: Math.round(monthlyLow),
+    monthlyHigh: Math.round(monthlyHigh),
+    annualLow: Math.round(annualLow),
+    annualHigh: Math.round(annualHigh),
     efficiencyPct,
   });
 });

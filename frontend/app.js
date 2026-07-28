@@ -54,6 +54,8 @@ async function loadData() {
     populateCalcForm();
     renderAgentPicker();
     selectAgent(currentAgentType);
+    populateWidgetPersonas();
+    resetWidgetChat();
   } catch (err) {
     console.error('Failed to load reference data from backend:', err);
   }
@@ -90,9 +92,9 @@ async function recalc() {
     });
     const r = await res.json();
 
-    document.getElementById('resImpl').textContent = agentIds.length ? `${fmt(r.implLow)} – ${fmt(r.implHigh)}` : '$0';
-    document.getElementById('resAmc').textContent = agentIds.length ? `${fmt(r.amcAnnual)} / yr` : '$0 / yr';
-    document.getElementById('resAmcMo').textContent = agentIds.length ? `${fmt(r.amcMonthly)} / mo` : '$0 / mo';
+    document.getElementById('resImpl').textContent = agentIds.length ? `${fmt(r.setupLow)} – ${fmt(r.setupHigh)}` : '$0';
+    document.getElementById('resAmcMo').textContent = agentIds.length ? `${fmt(r.monthlyLow)} – ${fmt(r.monthlyHigh)} / mo` : '$0 / mo';
+    document.getElementById('resAmc').textContent = agentIds.length ? `${fmt(r.annualLow)} – ${fmt(r.annualHigh)} / yr` : '$0 / yr';
     document.getElementById('resEff').textContent = agentIds.length ? `~${r.efficiencyPct}%` : '0%';
   } catch (err) {
     console.error('ROI calculation failed:', err);
@@ -143,12 +145,23 @@ function selectAgent(id) {
   });
 }
 
-function addMsg(text, cls) {
+function addMsg(text, cls, targetLog) {
+  const log = targetLog || chatLog;
   const div = document.createElement('div');
   div.className = 'msg ' + cls;
   div.textContent = text;
-  chatLog.appendChild(div);
-  chatLog.scrollTop = chatLog.scrollHeight;
+  log.appendChild(div);
+  log.scrollTop = log.scrollHeight;
+  return div;
+}
+
+function addTyping(targetLog) {
+  const log = targetLog || chatLog;
+  const div = document.createElement('div');
+  div.className = 'msg agent';
+  div.innerHTML = '<span class="typing-dots"><span></span><span></span><span></span></span>';
+  log.appendChild(div);
+  log.scrollTop = log.scrollHeight;
   return div;
 }
 
@@ -158,7 +171,7 @@ async function sendMessage(text) {
   history.push({ role: 'user', content: text });
   chatInput.value = '';
   chatSend.disabled = true;
-  const thinking = addMsg('typing', 'agent system-note');
+  const thinking = addTyping();
 
   try {
     const response = await fetch('/api/chat', {
@@ -185,5 +198,102 @@ async function sendMessage(text) {
 
 chatSend.addEventListener('click', () => sendMessage(chatInput.value));
 chatInput.addEventListener('keydown', e => { if (e.key === 'Enter') sendMessage(chatInput.value); });
+
+/* ---------- Floating chatbot widget ---------- */
+const fabChat = document.getElementById('fabChat');
+const widgetPanel = document.getElementById('widgetPanel');
+const widgetPersonaSelect = document.getElementById('widgetPersonaSelect');
+const widgetLog = document.getElementById('widgetLog');
+const widgetInput = document.getElementById('widgetInput');
+const widgetSend = document.getElementById('widgetSend');
+let widgetAgentType = 'support';
+let widgetHistory = [];
+
+fabChat.addEventListener('click', () => {
+  const isOpen = widgetPanel.classList.toggle('open');
+  fabChat.classList.toggle('open', isOpen);
+  if (isOpen) widgetInput.focus();
+});
+
+function populateWidgetPersonas() {
+  widgetPersonaSelect.innerHTML = '';
+  Object.entries(PERSONAS).forEach(([id, p]) => {
+    const opt = document.createElement('option');
+    opt.value = id;
+    opt.textContent = p.label;
+    if (id === widgetAgentType) opt.selected = true;
+    widgetPersonaSelect.appendChild(opt);
+  });
+}
+
+function resetWidgetChat() {
+  widgetHistory = [];
+  widgetLog.innerHTML = '';
+  const note = document.createElement('div');
+  note.className = 'msg system-note';
+  note.textContent = 'Session started, no data retained';
+  widgetLog.appendChild(note);
+  if (PERSONAS[widgetAgentType] && PERSONAS[widgetAgentType].greeting) {
+    addMsg(PERSONAS[widgetAgentType].greeting, 'agent', widgetLog);
+  }
+}
+
+widgetPersonaSelect.addEventListener('change', () => {
+  widgetAgentType = widgetPersonaSelect.value;
+  resetWidgetChat();
+});
+
+async function sendWidgetMessage(text) {
+  if (!text.trim()) return;
+  addMsg(text, 'user', widgetLog);
+  widgetHistory.push({ role: 'user', content: text });
+  widgetInput.value = '';
+  widgetSend.disabled = true;
+  const thinking = addTyping(widgetLog);
+
+  try {
+    const response = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ messages: widgetHistory, agentType: widgetAgentType }),
+    });
+    const data = await response.json();
+    thinking.remove();
+
+    if (!response.ok) {
+      addMsg(data.error || 'Demo connection error, please try again in a moment.', 'agent system-note', widgetLog);
+    } else {
+      addMsg(data.reply, 'agent', widgetLog);
+      widgetHistory.push({ role: 'assistant', content: data.reply });
+    }
+  } catch (err) {
+    thinking.remove();
+    addMsg('Demo connection error, please try again in a moment.', 'agent system-note', widgetLog);
+  }
+  widgetSend.disabled = false;
+  widgetInput.focus();
+}
+
+widgetSend.addEventListener('click', () => sendWidgetMessage(widgetInput.value));
+widgetInput.addEventListener('keydown', e => { if (e.key === 'Enter') sendWidgetMessage(widgetInput.value); });
+
+/* ---------- Widget close button ---------- */
+const widgetClose = document.getElementById('widgetClose');
+widgetClose.addEventListener('click', () => {
+  widgetPanel.classList.remove('open');
+  fabChat.classList.remove('open');
+});
+
+/* ---------- Fab tooltip (auto-show once, then fade) ---------- */
+const fabTooltip = document.getElementById('fabTooltip');
+let tooltipShown = false;
+setTimeout(() => {
+  if (!widgetPanel.classList.contains('open')) {
+    fabTooltip.classList.add('show');
+    tooltipShown = true;
+    setTimeout(() => fabTooltip.classList.remove('show'), 5000);
+  }
+}, 1800);
+fabChat.addEventListener('click', () => fabTooltip.classList.remove('show'));
 
 loadData();

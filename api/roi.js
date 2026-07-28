@@ -10,21 +10,29 @@ module.exports = (req, res) => {
 
   const selected = AGENTS.filter(a => agentIds.includes(a.id));
   if (selected.length === 0) {
-    return res.status(200).json({ implLow: 0, implHigh: 0, amcAnnual: 0, amcMonthly: 0, efficiencyPct: 0 });
+    return res.status(200).json({
+      setupLow: 0, setupHigh: 0,
+      monthlyLow: 0, monthlyHigh: 0,
+      annualLow: 0, annualHigh: 0,
+      efficiencyPct: 0,
+    });
   }
 
-  const implLow = selected.reduce((sum, a) => sum + a.baseLow * sizeMult, 0);
-  const implHigh = selected.reduce((sum, a) => sum + a.baseHigh * sizeMult, 0);
-  const implAvg = (implLow + implHigh) / 2;
-  const amcAnnual = implAvg * 0.18;
-  const amcMonthly = amcAnnual / 12;
+  const setupLow = selected.reduce((sum, a) => sum + a.setupLow * sizeMult, 0);
+  const setupHigh = selected.reduce((sum, a) => sum + a.setupHigh * sizeMult, 0);
+  const monthlyLow = selected.reduce((sum, a) => sum + a.monthlyLow * sizeMult, 0);
+  const monthlyHigh = selected.reduce((sum, a) => sum + a.monthlyHigh * sizeMult, 0);
+  const annualLow = monthlyLow * 12;
+  const annualHigh = monthlyHigh * 12;
   const efficiencyPct = Math.min(15 + (selected.length - 1) * 4, 40);
 
   res.status(200).json({
-    implLow: Math.round(implLow),
-    implHigh: Math.round(implHigh),
-    amcAnnual: Math.round(amcAnnual),
-    amcMonthly: Math.round(amcMonthly),
+    setupLow: Math.round(setupLow),
+    setupHigh: Math.round(setupHigh),
+    monthlyLow: Math.round(monthlyLow),
+    monthlyHigh: Math.round(monthlyHigh),
+    annualLow: Math.round(annualLow),
+    annualHigh: Math.round(annualHigh),
     efficiencyPct,
   });
 };
