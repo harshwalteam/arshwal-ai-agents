@@ -1,10 +1,11 @@
-/* ---------- Tabs ---------- */
-document.querySelectorAll('.tab').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.sheet').forEach(s => s.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById('sheet-' + btn.dataset.tab).classList.add('active');
+/* ---------- Smooth in-page scroll for nav links ---------- */
+document.querySelectorAll('a[href^="#"]').forEach(link => {
+  link.addEventListener('click', e => {
+    const target = document.querySelector(link.getAttribute('href'));
+    if (target) {
+      e.preventDefault();
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   });
 });
 
