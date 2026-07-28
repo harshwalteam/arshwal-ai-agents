@@ -1,17 +1,8 @@
 {
   "name": "harshwal-ai-agents",
   "version": "1.0.0",
-  "description": "Root wrapper so free hosts (Glitch, etc.) that expect package.json at the repo root can run the backend directly.",
-  "main": "backend/server.js",
-  "scripts": {
-    "start": "node backend/server.js"
-  },
+  "description": "Harshwal AI Agent Services workpaper. Root package.json for platforms (Vercel, Glitch, etc.) that expect it at the repo root. The /api functions use only Node's built-in fetch, no extra dependencies needed.",
   "engines": {
     "node": ">=18"
-  },
-  "dependencies": {
-    "cors": "^2.8.5",
-    "dotenv": "^16.4.5",
-    "express": "^4.19.2"
   }
 }
