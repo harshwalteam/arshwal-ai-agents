@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Harshwal AI Agent Services — Workpaper</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+
+  <div class="masthead">
+    <div class="mast-row">
+      <div>
+        <p class="mast-eyebrow">Harshwal &amp; Company LLP — Internal Working Paper</p>
+        <h1 class="mast-title">AI Agent Services — Opportunity Workpaper</h1>
+        <p class="mast-sub">A working tool to map, pitch, and scope Harshwal's move from software reseller to AI Agent implementation &amp; managed-services partner for our existing client base.</p>
+      </div>
+      <div class="stamp">AI&#8209;READY<br>PRACTICE<br>FY26</div>
+    </div>
+  </div>
+
+  <div class="tabbar" id="tabbar">
+    <button class="tab active" data-tab="overview">01 · Positioning</button>
+    <button class="tab" data-tab="demo">02 · Live Agent Demo</button>
+    <button class="tab" data-tab="calc">03 · Pricing / ROI</button>
+    <button class="tab" data-tab="roadmap">04 · Roadmap</button>
+  </div>
+
+  <!-- ===================== 01 OVERVIEW ===================== -->
+  <section class="sheet active" id="sheet-overview">
+    <div class="sheet-head">
+      <p class="sheet-eyebrow">Working thesis</p>
+      <h2 class="sheet-title">We're not competing with Ada, Sierra, Decagon or Kore.ai — we're implementing them.</h2>
+      <p class="sheet-desc">The market has moved from "chatbot software" to autonomous AI Employees that run support, voice, email, reporting and back-office workflows end to end. Harshwal's edge isn't building a foundation model — it's the trusted advisor relationship, domain depth (audit, tax, compliance) and the client roster to deploy this into. We package implementation, customization and ongoing maintenance as a service line.</p>
+    </div>
+
+    <div class="grid-cards">
+      <div class="card"><span class="tag">Service line</span><h4>AI Customer Support Agents</h4><p>Tier-1 inbound support, ticket triage and FAQ resolution for client help desks.</p></div>
+      <div class="card"><span class="tag">Service line</span><h4>AI Voice &amp; Receptionist Agents</h4><p>Phone-based intake, appointment routing and after-hours coverage.</p></div>
+      <div class="card"><span class="tag">Service line</span><h4>AI Email &amp; Communication Agents</h4><p>Drafting, triage and follow-up across shared inboxes.</p></div>
+      <div class="card"><span class="tag">Service line</span><h4>AI Reporting &amp; Analytics Agents</h4><p>Automated variance narratives, dashboards, board-ready summaries.</p></div>
+      <div class="card"><span class="tag">Service line</span><h4>AI Tax, Audit &amp; Compliance Agents</h4><p>Document intake, GL sampling prep, disbursement testing support, findings drafts.</p></div>
+      <div class="card"><span class="tag">Service line</span><h4>AI Knowledge Base &amp; Workflow Agents</h4><p>Internal SOP search, task routing and cross-system automation.</p></div>
+    </div>
+
+    <div class="pillar-list">
+      <div class="pillar">
+        <div class="pillar-num">A</div>
+        <div class="pillar-body"><h4>Position as an AI Solutions &amp; Agent Services Partner</h4><p>Implementation, customization, enterprise AI consulting, annual maintenance/support contracts, and modular agent bundles per client — not a single product SKU.</p></div>
+      </div>
+      <div class="pillar">
+        <div class="pillar-num">B</div>
+        <div class="pillar-body"><h4>Sell through the existing relationship</h4><p>Every current CPA, audit, and advisory client is a warm door for an AI Agent conversation — we already hold the trust and the data access.</p></div>
+      </div>
+      <div class="pillar">
+        <div class="pillar-num">C</div>
+        <div class="pillar-body"><h4>Recurring revenue, not one-time projects</h4><p>Implementation fee up front, then an annual maintenance contract (AMC) for tuning, monitoring and support — mirrors our existing audit/advisory retainer model.</p></div>
+      </div>
+    </div>
+
+    <div class="pillar-list" style="margin-top:8px;">
+      <div class="pillar">
+        <div class="pillar-num">?</div>
+        <div class="pillar-body"><h4>Open decisions to align on</h4><p>Which industries to prioritize first · which agents map best to our current client base · build our own platform vs. implement on top of Ada/Sierra/Decagon/Kore.ai · pricing model (fixed-fee implementation + AMC vs. usage-based vs. hybrid).</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== LIVE DEMO ===================== -->
+  <section class="sheet" id="sheet-demo">
+    <div class="sheet-head">
+      <p class="sheet-eyebrow">Client-facing proof point</p>
+      <h2 class="sheet-title"><span class="live-dot"></span>Try a live AI Agent</h2>
+      <p class="sheet-desc">Pick which agent type to demo, including a dedicated Customer Support agent, then chat with it live. Messages go to our own backend, which calls the AI model server-side, so the API key never touches the browser.</p>
+    </div>
+
+    <div class="agent-picker" id="agentPicker"></div>
+
+    <div class="demo-wrap">
+      <div class="chat-box">
+        <div class="chat-log" id="chatLog"></div>
+        <div class="chat-input-row">
+          <input type="text" id="chatInput" placeholder="Ask something a client might ask…" />
+          <button id="chatSend">SEND</button>
+        </div>
+      </div>
+      <div class="demo-side">
+        <h4>Try a prompt</h4>
+        <div id="promptChips"></div>
+        <p style="margin-top:16px;">This panel calls Harshwal's own backend at /api/chat, which holds the API key and can be wired to the firm's own client data, ticketing system and phone/email channels in production.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 03 CALCULATOR ===================== -->
+  <section class="sheet" id="sheet-calc">
+    <div class="sheet-head">
+      <p class="sheet-eyebrow">Scoping tool</p>
+      <h2 class="sheet-title">Illustrative pricing &amp; ROI estimator</h2>
+      <p class="sheet-desc">A rough-order-of-magnitude estimate to anchor a first client conversation. All calculation logic runs on the backend (<code>/api/roi</code>) — replace the assumptions with Harshwal's actual delivery costs before quoting.</p>
+    </div>
+
+    <div class="calc-wrap">
+      <div>
+        <div class="field-block">
+          <label class="field-label">Organization size</label>
+          <select class="select-native" id="calcSize">
+            <option value="small">Small (&lt; 50 staff)</option>
+            <option value="medium" selected>Medium (50–300 staff)</option>
+            <option value="large">Large (300+ staff / multi-site)</option>
+          </select>
+        </div>
+        <div class="field-block">
+          <label class="field-label">AI agents in scope</label>
+          <div class="check-grid" id="calcAgents"></div>
+        </div>
+      </div>
+
+      <div class="result-card">
+        <p class="result-eyebrow">Estimated scope</p>
+        <div class="result-line"><span>One-time implementation</span><span class="val" id="resImpl">$0</span></div>
+        <div class="result-line"><span>Annual maintenance (AMC)</span><span class="val" id="resAmc">$0 / yr</span></div>
+        <div class="result-line"><span>Monthly AMC billing</span><span class="val" id="resAmcMo">$0 / mo</span></div>
+        <div class="result-line"><span>Est. efficiency gain</span><span class="val" id="resEff">0%</span></div>
+        <p class="result-foot">Illustrative only — for internal discussion and first client conversations. Final pricing depends on integration complexity, data readiness and channel volume.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 04 ROADMAP ===================== -->
+  <section class="sheet" id="sheet-roadmap">
+    <div class="sheet-head">
+      <p class="sheet-eyebrow">Execution plan</p>
+      <h2 class="sheet-title">Suggested rollout roadmap</h2>
+      <p class="sheet-desc">A phased approach to move from this working paper to a live Harshwal AI Agent practice.</p>
+    </div>
+    <div class="roadmap">
+      <div class="phase">
+        <div><div class="phase-tag">Phase 1</div><div class="phase-when">Weeks 1–4</div></div>
+        <div><h3 class="phase-title">Assess &amp; select pilot client</h3><p class="phase-desc">Pick 1–2 existing clients (highest-fit industry from the opportunity map) and one agent type. Confirm build-vs-implement decision — likely start on top of an existing platform (Ada / Sierra / Decagon / Kore.ai) rather than a from-scratch build.</p></div>
+      </div>
+      <div class="phase">
+        <div><div class="phase-tag">Phase 2</div><div class="phase-when">Weeks 5–10</div></div>
+        <div><h3 class="phase-title">Build &amp; customize pilot agent</h3><p class="phase-desc">Configure the agent against the client's data, tone and workflows. Define guardrails for anything compliance- or filing-related. Internal QA against real historical tickets/calls/emails.</p></div>
+      </div>
+      <div class="phase">
+        <div><div class="phase-tag">Phase 3</div><div class="phase-when">Weeks 11–14</div></div>
+        <div><h3 class="phase-title">Pilot go-live &amp; measure</h3><p class="phase-desc">Run in shadow/parallel mode, then live with human fallback. Track resolution rate, response time and client satisfaction against the ROI estimator's assumptions.</p></div>
+      </div>
+      <div class="phase">
+        <div><div class="phase-tag">Phase 4</div><div class="phase-when">Ongoing</div></div>
+        <div><h3 class="phase-title">Package &amp; scale</h3><p class="phase-desc">Turn the pilot into a repeatable offer: fixed-fee implementation + AMC. Expand to the next 2–3 industries on the opportunity map using the same playbook.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="foot">HARSHWAL &amp; COMPANY LLP — AI AGENT SERVICES WORKING PAPER — FOR INTERNAL DISCUSSION ONLY</footer>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
